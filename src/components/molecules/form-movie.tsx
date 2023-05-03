@@ -1,17 +1,35 @@
-import { FormEvent, useEffect, useRef, useState } from "react";
+import {
+  FormEvent,
+  MutableRefObject,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import styled from "styled-components";
 
 export const FormMovie = () => {
   let disabledForm = true;
 
+  const fileInputRef =
+    useRef<HTMLInputElement>() as MutableRefObject<HTMLInputElement>;
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [thumbnailVal, setThumbnailVal] = useState("");
 
   const handleImageUpload = (e: FormEvent) => {
     const target = e.target as HTMLInputElement;
+
     const file: File = (target.files as FileList)[0];
+    console.log(file.name);
+
     setSelectedImage(file);
+  };
+
+  const resetFields = () => {
+    setTitle("");
+    setDescription("");
+    setSelectedImage(null);
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -37,37 +55,46 @@ export const FormMovie = () => {
       .then((res) => res.json())
       .then((data) => {
         console.log("Saved Movie", data);
+        resetFields();
+        fileInputRef.current.value = "";
       })
       .catch((err) => console.error(err));
   };
 
-  if (title && description && selectedImage) {
+  if (title.trim() && description.trim() && selectedImage) {
     disabledForm = false;
   }
 
   return (
     <Wrapper>
       <Form method="post">
-        <div>
+        <Fields>
           <Label htmlFor="">
             Title
             <Input
               type="text"
-              onChange={(e) => setTitle(e.currentTarget.value.trim())}
+              value={title}
+              onChange={(e) => setTitle(e.currentTarget.value)}
             />
           </Label>
           <Label htmlFor="">
             Description
             <Input
               type="text"
-              onChange={(e) => setDescription(e.currentTarget.value.trim())}
+              value={description}
+              onChange={(e) => setDescription(e.currentTarget.value)}
             />
           </Label>
           <Label htmlFor="">
             Thumbnail
-            <Input type="file" onChange={handleImageUpload} accept="image/*" />
+            <Input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleImageUpload}
+              accept="image/*"
+            />
           </Label>
-        </div>
+        </Fields>
 
         <Button type="submit" onClick={handleSubmit} disabled={disabledForm}>
           save
@@ -102,9 +129,7 @@ const Form = styled.form`
   flex-direction: column;
 `;
 
-const Label = styled.label`
-  padding-left: 1em;
-`;
+const Label = styled.label``;
 
 const Input = styled.input`
   margin-left: 0.3em;
@@ -122,4 +147,13 @@ const Image = styled.img`
 const Preview = styled.div`
   display: flex;
   flex-direction: column;
+`;
+const Fields = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+
+  @media screen and (min-width: 1280px) {
+    flex-direction: row;
+  }
 `;

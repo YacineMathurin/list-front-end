@@ -6,6 +6,7 @@ import { Form } from "./components/molecules/form";
 import { Counter } from "./components/organisms/counter";
 import { MovieList } from "./components/organisms/movie-list";
 import { AddMovie } from "./components/organisms/add-movie";
+import { EditMovie } from "./components/organisms/edit-movie";
 
 const router = createBrowserRouter([
   {
@@ -15,6 +16,10 @@ const router = createBrowserRouter([
   {
     path: "/add-movie",
     element: <AddMovie />,
+  },
+  {
+    path: "/edit-movie",
+    element: <EditMovie />,
   },
 ]);
 

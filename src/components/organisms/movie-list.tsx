@@ -13,10 +13,19 @@ type MoviesType = {
   };
 }[];
 
-type UseFetchProps = MoviesType;
+type UseFetchProps = {
+  loading: boolean;
+  data: MoviesType;
+};
 
 function useFetch(url: string): UseFetchProps {
-  const [data, setData] = useState<MoviesType>([]);
+  const [state, setState] = useState<{
+    loading: boolean;
+    data: MoviesType;
+  }>({
+    loading: true,
+    data: [],
+  });
 
   useEffect(() => {
     const controller = new AbortController();
@@ -26,7 +35,7 @@ function useFetch(url: string): UseFetchProps {
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        setData(data);
+        setState({ ...state, loading: false, data });
       })
       .catch((err) => console.error(err));
 
@@ -35,12 +44,22 @@ function useFetch(url: string): UseFetchProps {
     };
   }, []);
 
-  return data;
+  return state;
 }
 
 export const MovieList = () => {
-  const movies = useFetch("http://localhost:3000/movie");
   const navigate = useNavigate();
+  const { loading, data: movies } = useFetch("http://localhost:3000/movie");
+
+  useEffect(() => {}, [movies]);
+
+  if (loading) {
+    return (
+      <>
+        <h1>Loading...</h1>
+      </>
+    );
+  }
 
   if (!movies.length) {
     return (
@@ -53,6 +72,7 @@ export const MovieList = () => {
 
   return (
     <div>
+      <h1>All movies</h1>
       <button onClick={() => navigate("/add-movie")}>Add movie</button>
       <Container>
         {movies.map((movie) => (
