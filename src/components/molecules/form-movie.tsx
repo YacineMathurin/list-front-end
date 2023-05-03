@@ -17,7 +17,7 @@ export const FormMovie = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const movie = {
-      name: title,
+      title,
       description,
       thumbnail: selectedImage,
     };
@@ -27,7 +27,7 @@ export const FormMovie = () => {
 
     const formData = new FormData();
     formData.append("image", selectedImage as File);
-    formData.append("name", title);
+    formData.append("title", title);
     formData.append("description", description);
 
     fetch(url, {
@@ -46,11 +46,11 @@ export const FormMovie = () => {
   }
 
   return (
-    <>
+    <Wrapper>
       <Form method="post">
         <div>
           <Label htmlFor="">
-            Name
+            Title
             <Input
               type="text"
               onChange={(e) => setTitle(e.currentTarget.value.trim())}
@@ -84,9 +84,16 @@ export const FormMovie = () => {
           <span>{description}</span>
         </Preview>
       )}
-    </>
+    </Wrapper>
   );
 };
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
 
 const Form = styled.form`
   display: flex;
