@@ -1,7 +1,6 @@
-import { render, screen } from "@testing-library/react";
+import { render} from "@testing-library/react";
 import { Counter } from "../counter";
 
-it("", () => {
+it("Testing counter", () => {
   render(<Counter />);
-//   const addBtn = screen.getByTestId();
 });

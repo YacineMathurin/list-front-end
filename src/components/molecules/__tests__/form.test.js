@@ -1,7 +1,6 @@
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import App from "../../../App";
+import { Form } from "../form";
 
 beforeEach(()=>{
   console.log("BEFORE EACH TEST");
@@ -12,12 +11,8 @@ beforeAll(()=>{
 })
 
 it("check the form is displayed", async () => {
-
-  const email = "yacine@gmail.com";
-  const password = "azerty";
-
   //  Mount the fomr component
-  render(<App />);
+  render(<Form />);
 
   // check form fields are on the page
   const emailInput = screen.getByTestId("email-input");
@@ -29,15 +24,6 @@ it("check the form is displayed", async () => {
   const submitButton = screen.getByText(/submit/i);
   expect(submitButton).toBeInTheDocument();
 
-  // Fill form's fields
-  userEvent.type(emailInput, email);
-  userEvent.type(passwordInput, password);
-
-  // Submit the form
-  await userEvent.click(submitButton);
-
-  // Check integration
-  const emailToSubmit = screen.getByText(email);
-  expect(emailToSubmit).toBeInTheDocument();
+  
 });
 

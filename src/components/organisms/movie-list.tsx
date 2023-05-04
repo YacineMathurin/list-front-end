@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Buffer } from "buffer";
 import styled from "styled-components";
+import { Button } from "../atoms/button";
 
 type MoviesType = {
   id: string;
-  name: string;
+  title: string;
   description: string;
 
   thumbnail: {
@@ -71,30 +72,49 @@ export const MovieList = () => {
   }
 
   return (
-    <div>
+    <Wrapper>
       <h1>All movies</h1>
-      <button onClick={() => navigate("/add-movie")}>Add movie</button>
+      <Button onClick={() => navigate("/add-movie")}>Add movie</Button>
+
       <Container>
         {movies.map((movie) => (
           <div key={movie.id}>
             <img
               src={`http://localhost:3000/uploads/${movie.thumbnail}`}
-              alt={`Thumbnail - ${movie.name}`}
+              alt={`Thumbnail - ${movie.title}`}
               width={"150px"}
               height={"55px"}
             />
-            <p>{movie.name}</p>
-            <p>{movie.description}</p>
-            <button onClick={() => navigate("/edit-movie")}>Edit</button>
+            <Title>{movie.title}</Title>
+            <Title>{movie.description}</Title>
+            <Button
+              onClick={() =>
+                navigate("/edit-movie", {
+                  state: { movie },
+                })
+              }
+              size="sm"
+            >
+              Edit
+            </Button>
           </div>
         ))}
       </Container>
-    </div>
+    </Wrapper>
   );
 };
 
 const Container = styled.div`
   margin-top: 1em;
   display: flex;
+  flex-wrap: wrap;
   gap: 1em;
+`;
+
+const Wrapper = styled.div`
+  padding: 2em;
+`;
+
+const Title = styled.span`
+  display: block;
 `;

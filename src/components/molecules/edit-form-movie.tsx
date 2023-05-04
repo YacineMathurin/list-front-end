@@ -1,13 +1,16 @@
-import {
-  FormEvent,
-  MutableRefObject,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { FC, FormEvent, MutableRefObject, useRef, useState } from "react";
 import styled from "styled-components";
+import { Button } from "../atoms/button";
 
-export const FormMovie = () => {
+type FormMovieProps = {
+  dataFields?: {
+    id: string;
+    title: string;
+    description: string;
+    thumbnail: string;
+  };
+};
+export const EditFormMovie: FC<FormMovieProps> = ({ dataFields }) => {
   let disabledForm = true;
 
   const fileInputRef =
@@ -15,7 +18,6 @@ export const FormMovie = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [thumbnailVal, setThumbnailVal] = useState("");
 
   const handleImageUpload = (e: FormEvent) => {
     const target = e.target as HTMLInputElement;
@@ -57,6 +59,7 @@ export const FormMovie = () => {
         console.log("Saved Movie", data);
         resetFields();
         fileInputRef.current.value = "";
+        alert("Movie added !");
       })
       .catch((err) => console.error(err));
   };
@@ -65,15 +68,34 @@ export const FormMovie = () => {
     disabledForm = false;
   }
 
+  console.log("Datafield", dataFields);
+
   return (
     <Wrapper>
       <Form method="post">
         <Fields>
+          <ThumbnailDiv>
+            <Image
+              src={`http://localhost:3000/uploads/${dataFields?.thumbnail}`}
+              alt={`Thumbnail - ${dataFields?.title}`}
+              width={"150px"}
+              height={"55px"}
+            />
+            <Label htmlFor="">
+              Edit thumbnail
+              <Input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleImageUpload}
+                accept="image/*"
+              />
+            </Label>
+          </ThumbnailDiv>
           <Label htmlFor="">
             Title
             <Input
               type="text"
-              value={title}
+              value={title ? title : dataFields?.title}
               onChange={(e) => setTitle(e.currentTarget.value)}
             />
           </Label>
@@ -81,36 +103,28 @@ export const FormMovie = () => {
             Description
             <Input
               type="text"
-              value={description}
+              value={description ? description : dataFields?.description}
               onChange={(e) => setDescription(e.currentTarget.value)}
             />
           </Label>
-          <Label htmlFor="">
-            Thumbnail
-            <Input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleImageUpload}
-              accept="image/*"
-            />
-          </Label>
+          {!dataFields && (
+            <Label htmlFor="">
+              Thumbnail
+              <Input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleImageUpload}
+                accept="image/*"
+              />
+            </Label>
+          )}
         </Fields>
-
-        <Button type="submit" onClick={handleSubmit} disabled={disabledForm}>
-          save
-        </Button>
+        <SubmitButtonContainer>
+          <Button type="submit" onClick={handleSubmit} disabled={disabledForm}>
+            save
+          </Button>
+        </SubmitButtonContainer>
       </Form>
-      {selectedImage && (
-        <Preview>
-          <Image
-            alt="Movie Thumbnail"
-            width={"150px"}
-            src={URL.createObjectURL(selectedImage as File)}
-          />
-          <span>{title}</span>
-          <span>{description}</span>
-        </Preview>
-      )}
     </Wrapper>
   );
 };
@@ -132,28 +146,34 @@ const Form = styled.form`
 const Label = styled.label``;
 
 const Input = styled.input`
-  margin-left: 0.3em;
-`;
-
-const Button = styled.button`
-  float: right;
-  margin-top: 1em;
+  display: block;
+  padding: 0.4em;
+  width: -webkit-fill-available;
 `;
 
 const Image = styled.img`
-  margin-top: 1em;
+  margin: 1em 0 1em;
 `;
 
-const Preview = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
 const Fields = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1em;
 
   @media screen and (min-width: 1280px) {
+    align-items: flex-end;
     flex-direction: row;
   }
+`;
+
+const SubmitButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-top: 1em;
+`;
+
+const ThumbnailDiv = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
