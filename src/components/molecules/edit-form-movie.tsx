@@ -1,23 +1,62 @@
-import { FC, FormEvent, MutableRefObject, useRef, useState } from "react";
+import {
+  FC,
+  FormEvent,
+  MutableRefObject,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import styled from "styled-components";
 import { Button } from "../atoms/button";
 
-type FormMovieProps = {
-  dataFields?: {
+type EditMovieProps = {
+  dataFields: {
     id: string;
     title: string;
     description: string;
     thumbnail: string;
   };
 };
-export const EditFormMovie: FC<FormMovieProps> = ({ dataFields }) => {
+
+type GetImageProps = {
+  dataFields: EditMovieProps["dataFields"];
+  selectedImage: File | string;
+};
+
+const GetImage: FC<GetImageProps> = ({ dataFields, selectedImage }) => {
+  if (typeof selectedImage === "string") {
+    return (
+      <Image
+        src={`http://localhost:3000/uploads/${dataFields.thumbnail}`}
+        alt={`Thumbnail - ${dataFields.title}`}
+        width={"150px"}
+        height={"55px"}
+      />
+    );
+  }
+  return (
+    <Image
+      alt="Movie Thumbnail"
+      width={"150px"}
+      src={URL.createObjectURL(selectedImage)}
+    />
+  );
+};
+
+export const EditFormMovie: FC<EditMovieProps> = ({ dataFields }) => {
   let disabledForm = true;
 
   const fileInputRef =
     useRef<HTMLInputElement>() as MutableRefObject<HTMLInputElement>;
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [selectedImage, setSelectedImage] = useState<File | string>(
+    dataFields.thumbnail
+  );
+  const [title, setTitle] = useState(dataFields.title);
+  const [description, setDescription] = useState(dataFields.description);
+
+  useEffect(() => {
+    console.log("Change occured");
+  }, []);
 
   const handleImageUpload = (e: FormEvent) => {
     const target = e.target as HTMLInputElement;
@@ -26,12 +65,6 @@ export const EditFormMovie: FC<FormMovieProps> = ({ dataFields }) => {
     console.log(file.name);
 
     setSelectedImage(file);
-  };
-
-  const resetFields = () => {
-    setTitle("");
-    setDescription("");
-    setSelectedImage(null);
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -56,15 +89,19 @@ export const EditFormMovie: FC<FormMovieProps> = ({ dataFields }) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("Saved Movie", data);
-        resetFields();
+        console.log("Updated Movie", data);
         fileInputRef.current.value = "";
-        alert("Movie added !");
+        alert("Movie edited !");
       })
       .catch((err) => console.error(err));
   };
 
-  if (title.trim() && description.trim() && selectedImage) {
+  console.log("Checking save state", title.trim(), dataFields.title);
+  if (
+    title.trim() !== dataFields.title ||
+    description.trim() !== dataFields.description ||
+    selectedImage !== dataFields.thumbnail
+  ) {
     disabledForm = false;
   }
 
@@ -75,17 +112,11 @@ export const EditFormMovie: FC<FormMovieProps> = ({ dataFields }) => {
       <Form method="post">
         <Fields>
           <ThumbnailDiv>
-            <Image
-              src={`http://localhost:3000/uploads/${dataFields?.thumbnail}`}
-              alt={`Thumbnail - ${dataFields?.title}`}
-              width={"150px"}
-              height={"55px"}
-            />
+            <GetImage dataFields={dataFields} selectedImage={selectedImage} />
             <Label htmlFor="">
               Edit thumbnail
               <Input
                 type="file"
-                ref={fileInputRef}
                 onChange={handleImageUpload}
                 accept="image/*"
               />
@@ -95,7 +126,7 @@ export const EditFormMovie: FC<FormMovieProps> = ({ dataFields }) => {
             Title
             <Input
               type="text"
-              value={title ? title : dataFields?.title}
+              value={title ? title : dataFields.title}
               onChange={(e) => setTitle(e.currentTarget.value)}
             />
           </Label>
@@ -103,22 +134,12 @@ export const EditFormMovie: FC<FormMovieProps> = ({ dataFields }) => {
             Description
             <Input
               type="text"
-              value={description ? description : dataFields?.description}
+              value={description ? description : dataFields.description}
               onChange={(e) => setDescription(e.currentTarget.value)}
             />
           </Label>
-          {!dataFields && (
-            <Label htmlFor="">
-              Thumbnail
-              <Input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleImageUpload}
-                accept="image/*"
-              />
-            </Label>
-          )}
         </Fields>
+
         <SubmitButtonContainer>
           <Button type="submit" onClick={handleSubmit} disabled={disabledForm}>
             save

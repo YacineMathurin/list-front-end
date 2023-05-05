@@ -74,7 +74,7 @@ export const MovieList = () => {
   return (
     <Wrapper>
       <h1>All movies</h1>
-      <Button onClick={() => navigate("/add-movie")}>Add movie</Button>
+      <Button onClick={() => navigate("/add-movie")}>new movie</Button>
 
       <Container>
         {movies.map((movie) => (
@@ -86,7 +86,7 @@ export const MovieList = () => {
               height={"55px"}
             />
             <Title>{movie.title}</Title>
-            <Title>{movie.description}</Title>
+            <Description>{movie.description}</Description>
             <Button
               onClick={() =>
                 navigate("/edit-movie", {
@@ -117,4 +117,8 @@ const Wrapper = styled.div`
 
 const Title = styled.span`
   display: block;
+`;
+
+const Description = styled(Title)`
+  font-size: 12px;
 `;
