@@ -66,7 +66,7 @@ export const MovieList = () => {
     return (
       <>
         <h6>No movie yet</h6>
-        <button onClick={() => navigate("/add-movie")}>Add movie</button>
+        <Button onClick={() => navigate("/add-movie")}>New movie</Button>
       </>
     );
   }

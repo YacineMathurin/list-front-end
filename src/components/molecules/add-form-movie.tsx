@@ -1,10 +1,4 @@
-import {
-  FormEvent,
-  MutableRefObject,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { FormEvent, MutableRefObject, useRef, useState } from "react";
 import styled from "styled-components";
 import { Button } from "../atoms/button";
 
@@ -16,7 +10,6 @@ export const AddFormMovie = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [thumbnailVal, setThumbnailVal] = useState("");
 
   const handleImageUpload = (e: FormEvent) => {
     const target = e.target as HTMLInputElement;
@@ -45,7 +38,7 @@ export const AddFormMovie = () => {
     const url = `http://localhost:3000/movie/upload`;
 
     const formData = new FormData();
-    formData.append("image", selectedImage as File);
+    formData.append("thumbnail", selectedImage as File);
     formData.append("title", title);
     formData.append("description", description);
 
@@ -109,7 +102,7 @@ export const AddFormMovie = () => {
           <Image
             alt="Movie Thumbnail"
             width={"150px"}
-            src={URL.createObjectURL(selectedImage as File)}
+            src={URL.createObjectURL(selectedImage)}
           />
           <span>{title}</span>
           <span>{description}</span>

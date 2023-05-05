@@ -1,11 +1,4 @@
-import {
-  FC,
-  FormEvent,
-  MutableRefObject,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { FC, FormEvent, useState } from "react";
 import styled from "styled-components";
 import { Button } from "../atoms/button";
 
@@ -21,6 +14,11 @@ type EditMovieProps = {
 type GetImageProps = {
   dataFields: EditMovieProps["dataFields"];
   selectedImage: File | string;
+};
+
+type GetTitleProps = {
+  dataFields: EditMovieProps["dataFields"];
+  title: string;
 };
 
 const GetImage: FC<GetImageProps> = ({ dataFields, selectedImage }) => {
@@ -43,20 +41,25 @@ const GetImage: FC<GetImageProps> = ({ dataFields, selectedImage }) => {
   );
 };
 
+const GetTitle: FC<GetTitleProps> = ({ title, dataFields }) => {
+  if (title.trim() === dataFields.title) {
+    return <span>Title</span>;
+  }
+  return <UpdatedTitle>Updated title</UpdatedTitle>;
+};
+
 export const EditFormMovie: FC<EditMovieProps> = ({ dataFields }) => {
   let disabledForm = true;
 
-  const fileInputRef =
-    useRef<HTMLInputElement>() as MutableRefObject<HTMLInputElement>;
   const [selectedImage, setSelectedImage] = useState<File | string>(
     dataFields.thumbnail
   );
   const [title, setTitle] = useState(dataFields.title);
   const [description, setDescription] = useState(dataFields.description);
 
-  useEffect(() => {
-    console.log("Change occured");
-  }, []);
+  const updatedTitle = title.trim() !== dataFields.title;
+  const updatedDescription = description.trim() !== dataFields.description;
+  const updatedThumbnail = selectedImage !== dataFields.thumbnail;
 
   const handleImageUpload = (e: FormEvent) => {
     const target = e.target as HTMLInputElement;
@@ -67,45 +70,43 @@ export const EditFormMovie: FC<EditMovieProps> = ({ dataFields }) => {
     setSelectedImage(file);
   };
 
+  const buildFormData = () => {
+    const formData = new FormData();
+
+    const updatedFields = {
+      id: dataFields.id,
+      ...(updatedTitle && { title }),
+      ...(updatedDescription && { description }),
+      ...(updatedThumbnail && { thumbnail: selectedImage }),
+    };
+
+    for (const [key, value] of Object.entries(updatedFields)) {
+      formData.append(key, value);
+    }
+
+    return formData;
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const movie = {
-      title,
-      description,
-      thumbnail: selectedImage,
-    };
-    console.log("Movie", movie);
-
-    const url = `http://localhost:3000/movie/upload`;
-
-    const formData = new FormData();
-    formData.append("image", selectedImage as File);
-    formData.append("title", title);
-    formData.append("description", description);
+    const url = `http://localhost:3000/movie/update`;
+    const formData = buildFormData();
 
     fetch(url, {
-      method: "POST",
+      method: "PATCH",
       body: formData,
     })
       .then((res) => res.json())
       .then((data) => {
         console.log("Updated Movie", data);
-        fileInputRef.current.value = "";
-        alert("Movie edited !");
+        alert("Movie Updated !");
       })
       .catch((err) => console.error(err));
   };
 
-  console.log("Checking save state", title.trim(), dataFields.title);
-  if (
-    title.trim() !== dataFields.title ||
-    description.trim() !== dataFields.description ||
-    selectedImage !== dataFields.thumbnail
-  ) {
+  if (updatedTitle || updatedDescription || updatedThumbnail) {
     disabledForm = false;
   }
-
-  console.log("Datafield", dataFields);
 
   return (
     <Wrapper>
@@ -123,7 +124,7 @@ export const EditFormMovie: FC<EditMovieProps> = ({ dataFields }) => {
             </Label>
           </ThumbnailDiv>
           <Label htmlFor="">
-            Title
+            <GetTitle dataFields={dataFields} title={title} />
             <Input
               type="text"
               value={title ? title : dataFields.title}
@@ -197,4 +198,8 @@ const SubmitButtonContainer = styled.div`
 const ThumbnailDiv = styled.div`
   display: flex;
   flex-direction: column;
+`;
+
+const UpdatedTitle = styled.span`
+  color: goldenrod;
 `;
