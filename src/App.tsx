@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { MovieList } from "./components/organisms/movie-list";
 import { AddMovie } from "./components/organisms/add-movie";
 import { EditMovie } from "./components/organisms/edit-movie";
+import "toastify-js/src/toastify.css";
 
 const router = createBrowserRouter([
   {
