@@ -1,44 +1,22 @@
-import { FormEvent, MutableRefObject, useRef, useState } from "react";
 import styled from "styled-components";
+import { useForm } from "react-hook-form";
+
 import { Button } from "../atoms/button";
 
 export const AddFormMovie = () => {
   let disabledForm = true;
 
-  const fileInputRef =
-    useRef<HTMLInputElement>() as MutableRefObject<HTMLInputElement>;
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const { register, handleSubmit, watch, reset } = useForm();
 
-  const handleImageUpload = (e: FormEvent) => {
-    const target = e.target as HTMLInputElement;
+  const title = watch("title");
+  const description = watch("description");
+  const thumbnail = watch("thumbnail")?.[0];
 
-    const file: File = (target.files as FileList)[0];
-    console.log(file.name);
-
-    setSelectedImage(file);
-  };
-
-  const resetFields = () => {
-    setTitle("");
-    setDescription("");
-    setSelectedImage(null);
-  };
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    const movie = {
-      title,
-      description,
-      thumbnail: selectedImage,
-    };
-    console.log("Movie", movie);
-
+  const onSubmit = async () => {
     const url = `http://localhost:3000/movie/upload`;
 
     const formData = new FormData();
-    formData.append("thumbnail", selectedImage as File);
+    formData.append("thumbnail", thumbnail as File);
     formData.append("title", title);
     formData.append("description", description);
 
@@ -48,61 +26,49 @@ export const AddFormMovie = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("Saved Movie", data);
-        resetFields();
-        fileInputRef.current.value = "";
+        alert("Saved Movie");
+        reset();
       })
       .catch((err) => console.error(err));
   };
 
-  if (title.trim() && description.trim() && selectedImage) {
+  if (title?.trim() && description?.trim() && thumbnail) {
     disabledForm = false;
   }
 
   return (
     <Wrapper>
-      <Form method="post">
+      <Form onSubmit={handleSubmit(onSubmit)}>
         <Fields>
           <Label htmlFor="">
             Title
-            <Input
-              type="text"
-              placeholder="Top Gun"
-              value={title}
-              onChange={(e) => setTitle(e.currentTarget.value)}
-            />
+            <Input {...register("title")} type="text" placeholder="Top Gun" />
           </Label>
           <Label htmlFor="">
             Description
             <Input
+              {...register("description")}
               type="text"
               placeholder="A super cool movie"
-              value={description}
-              onChange={(e) => setDescription(e.currentTarget.value)}
             />
           </Label>
           <Label htmlFor="">
             Thumbnail
-            <Input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleImageUpload}
-              accept="image/*"
-            />
+            <Input {...register("thumbnail")} type="file" accept="image/*" />
           </Label>
         </Fields>
         <SubmitButtonContainer>
-          <Button type="submit" onClick={handleSubmit} disabled={disabledForm}>
+          <Button type="submit" disabled={disabledForm}>
             save
           </Button>
         </SubmitButtonContainer>
       </Form>
-      {selectedImage && (
+      {thumbnail && (
         <Preview>
           <Image
             alt="Movie Thumbnail"
             width={"150px"}
-            src={URL.createObjectURL(selectedImage)}
+            src={URL.createObjectURL(thumbnail)}
           />
           <span>{title}</span>
           <span>{description}</span>
