@@ -2,24 +2,25 @@ import styled from "styled-components";
 import { useLocation, useNavigate } from "react-router-dom";
 import { EditFormMovie } from "../molecules/edit-form-movie";
 import { Button } from "../atoms/button";
+import { useToast } from "../../hooks/use-toast";
 
 export const EditMovie = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const { movie } = state;
+  const toast = useToast();
 
   const handleMovieDelection = async () => {
-    const url = "http://localhost:3000/movie/delete";
+    const url = `${process.env.REACT_APP_SERVER_HOST}/movies/delete`;
     try {
-      const response = await fetch(url, {
+      await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ id: movie.id, thumbnailPath: movie.thumbnail }),
       });
-      const data = await response.json();
-      console.log("Response after delete", data);
+      toast("Movie Deleted !");
       navigate("/");
     } catch (error) {
       console.error(error);

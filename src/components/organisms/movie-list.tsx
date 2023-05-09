@@ -1,56 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Buffer } from "buffer";
 import styled from "styled-components";
 import { Button } from "../atoms/button";
-
-type MoviesType = {
-  id: string;
-  title: string;
-  description: string;
-
-  thumbnail: {
-    data: Buffer;
-  };
-}[];
-
-type UseFetchProps = {
-  loading: boolean;
-  data: MoviesType;
-};
-
-function useFetch(url: string): UseFetchProps {
-  const [state, setState] = useState<{
-    loading: boolean;
-    data: MoviesType;
-  }>({
-    loading: true,
-    data: [],
-  });
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    fetch(url, { signal })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        setState({ ...state, loading: false, data });
-      })
-      .catch((err) => console.error(err));
-
-    return () => {
-      controller.abort();
-    };
-  }, []);
-
-  return state;
-}
+import { useFetch } from "../../hooks/use-fetch";
 
 export const MovieList = () => {
   const navigate = useNavigate();
-  const { loading, data: movies } = useFetch("http://localhost:3000/movie");
+
+  const {
+    loading,
+    data: movies,
+    error,
+  } = useFetch(`${process.env.REACT_APP_SERVER_HOST}/movies`);
+
+  console.log("Env", process.env);
 
   useEffect(() => {}, [movies]);
 
@@ -58,6 +21,14 @@ export const MovieList = () => {
     return (
       <>
         <h1>Loading...</h1>
+      </>
+    );
+  }
+  if (error) {
+    return (
+      <>
+        <h6>Something whent wrong</h6>;
+        <Button onClick={() => navigate(0)}>Reload Page</Button>
       </>
     );
   }
@@ -80,7 +51,7 @@ export const MovieList = () => {
         {movies.map((movie) => (
           <div key={movie.id}>
             <img
-              src={`http://localhost:3000/uploads/${movie.thumbnail}`}
+              src={`${process.env.REACT_APP_SERVER_HOST}/uploads/${movie.thumbnail}`}
               alt={`Thumbnail - ${movie.title}`}
               width={"150px"}
               height={"55px"}
@@ -105,10 +76,15 @@ export const MovieList = () => {
 };
 
 const Container = styled.div`
-  margin-top: 1em;
+  margin: 1em auto;
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 1em;
+
+  @media screen and (min-width: 1280px) {
+    max-width: 80%;
+  }
 `;
 
 const Wrapper = styled.div`

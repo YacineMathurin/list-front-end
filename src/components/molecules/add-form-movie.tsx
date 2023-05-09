@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
+import toastify from "toastify-js";
 
 import { Button } from "../atoms/button";
 
@@ -13,7 +14,7 @@ export const AddFormMovie = () => {
   const thumbnail = watch("thumbnail")?.[0];
 
   const onSubmit = async () => {
-    const url = `http://localhost:3000/movie/upload`;
+    const url = `${process.env.REACT_APP_SERVER_HOST}/movies/upload`;
 
     const formData = new FormData();
     formData.append("thumbnail", thumbnail as File);
@@ -26,7 +27,10 @@ export const AddFormMovie = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        alert("Saved Movie");
+        toastify({
+          text: "New movie recorded !",
+          duration: 3000,
+        }).showToast();
         reset();
       })
       .catch((err) => console.error(err));

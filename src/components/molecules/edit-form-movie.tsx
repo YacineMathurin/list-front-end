@@ -25,7 +25,7 @@ const GetImage: FC<GetImageProps> = ({ dataFields, selectedImage }) => {
   if (typeof selectedImage === "string") {
     return (
       <Image
-        src={`http://localhost:3000/uploads/${dataFields.thumbnail}`}
+        src={`${process.env.REACT_APP_SERVER_HOST}/uploads/${dataFields.thumbnail}`}
         alt={`Thumbnail - ${dataFields.title}`}
         width={"150px"}
         height={"55px"}
@@ -89,7 +89,7 @@ export const EditFormMovie: FC<EditMovieProps> = ({ dataFields }) => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const url = `http://localhost:3000/movie/update`;
+    const url = `${process.env.REACT_APP_SERVER_HOST}/movies/update`;
     const formData = buildFormData();
 
     fetch(url, {
