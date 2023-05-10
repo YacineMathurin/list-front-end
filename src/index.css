@@ -12,6 +12,10 @@ code {
     monospace;
 }
 
+input {
+  font-family: var(--regular-font-family);
+}
+
 @font-face {
   font-family: "Akzidenz-Grotesk Std Ext Regular";
   src: url("../public/fonts/AkzidenzGroteskStd-Ext.woff2"),
@@ -33,6 +37,8 @@ code {
   unicode-range: u+0 -10 ffff;
   font-display: swap;
 }
+
+
 
 :root {
   --regular-font-family: 'Akzidenz-Grotesk Std Ext Regular', sans-serif;

@@ -1,6 +1,7 @@
-import { FC, FormEvent, useState } from "react";
+import { FC } from "react";
 import styled from "styled-components";
 import { Button } from "../atoms/button";
+import { useForm } from "react-hook-form";
 
 type EditMovieProps = {
   dataFields: {
@@ -13,7 +14,7 @@ type EditMovieProps = {
 
 type GetImageProps = {
   dataFields: EditMovieProps["dataFields"];
-  selectedImage: File | string;
+  thumbnail: File | string;
 };
 
 type GetTitleProps = {
@@ -21,8 +22,8 @@ type GetTitleProps = {
   title: string;
 };
 
-const GetImage: FC<GetImageProps> = ({ dataFields, selectedImage }) => {
-  if (typeof selectedImage === "string") {
+const GetImage: FC<GetImageProps> = ({ dataFields, thumbnail }) => {
+  if (typeof thumbnail === "string") {
     return (
       <Image
         src={`${process.env.REACT_APP_SERVER_HOST}/uploads/${dataFields.thumbnail}`}
@@ -36,13 +37,13 @@ const GetImage: FC<GetImageProps> = ({ dataFields, selectedImage }) => {
     <Image
       alt="Movie Thumbnail"
       width={"150px"}
-      src={URL.createObjectURL(selectedImage)}
+      src={URL.createObjectURL(thumbnail)}
     />
   );
 };
 
 const GetTitle: FC<GetTitleProps> = ({ title, dataFields }) => {
-  if (title.trim() === dataFields.title) {
+  if (title?.trim() === dataFields.title) {
     return <span>Title</span>;
   }
   return <UpdatedTitle>Updated title</UpdatedTitle>;
@@ -51,24 +52,21 @@ const GetTitle: FC<GetTitleProps> = ({ title, dataFields }) => {
 export const EditFormMovie: FC<EditMovieProps> = ({ dataFields }) => {
   let disabledForm = true;
 
-  const [selectedImage, setSelectedImage] = useState<File | string>(
-    dataFields.thumbnail
-  );
-  const [title, setTitle] = useState(dataFields.title);
-  const [description, setDescription] = useState(dataFields.description);
+  const { register, watch, handleSubmit } = useForm({
+    defaultValues: {
+      title: dataFields.title,
+      description: dataFields.description,
+      thumbnail: [dataFields.thumbnail],
+    },
+  });
 
-  const updatedTitle = title.trim() !== dataFields.title;
-  const updatedDescription = description.trim() !== dataFields.description;
-  const updatedThumbnail = selectedImage !== dataFields.thumbnail;
+  const title = watch("title");
+  const description = watch("description");
+  const thumbnail = watch("thumbnail")?.[0];
 
-  const handleImageUpload = (e: FormEvent) => {
-    const target = e.target as HTMLInputElement;
-
-    const file: File = (target.files as FileList)[0];
-    console.log(file.name);
-
-    setSelectedImage(file);
-  };
+  const updatedTitle = title?.trim() !== dataFields.title;
+  const updatedDescription = description?.trim() !== dataFields.description;
+  const updatedThumbnail = thumbnail !== dataFields.thumbnail;
 
   const buildFormData = () => {
     const formData = new FormData();
@@ -77,7 +75,7 @@ export const EditFormMovie: FC<EditMovieProps> = ({ dataFields }) => {
       id: dataFields.id,
       ...(updatedTitle && { title }),
       ...(updatedDescription && { description }),
-      ...(updatedThumbnail && { thumbnail: selectedImage }),
+      ...(updatedThumbnail && { thumbnail }),
     };
 
     for (const [key, value] of Object.entries(updatedFields)) {
@@ -87,8 +85,9 @@ export const EditFormMovie: FC<EditMovieProps> = ({ dataFields }) => {
     return formData;
   };
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async () => {
+    console.log("on Submit called !", title, description, thumbnail);
+
     const url = `${process.env.REACT_APP_SERVER_HOST}/movies/update`;
     const formData = buildFormData();
 
@@ -104,47 +103,49 @@ export const EditFormMovie: FC<EditMovieProps> = ({ dataFields }) => {
       .catch((err) => console.error(err));
   };
 
+  console.log(
+    "On default values",
+    title,
+    description,
+    thumbnail,
+    typeof watch("thumbnail")
+  );
+
   if (updatedTitle || updatedDescription || updatedThumbnail) {
     disabledForm = false;
   }
 
   return (
     <Wrapper>
-      <Form method="post">
+      <Form onSubmit={handleSubmit(onSubmit)}>
         <Fields>
           <ThumbnailDiv>
-            <GetImage dataFields={dataFields} selectedImage={selectedImage} />
-            <Label htmlFor="">
+            <GetImage dataFields={dataFields} thumbnail={thumbnail} />
+            <Label>
               Edit thumbnail
-              <Input
-                type="file"
-                onChange={handleImageUpload}
-                accept="image/*"
-              />
+              <Input {...register("thumbnail")} type="file" accept="image/*" />
             </Label>
           </ThumbnailDiv>
-          <Label htmlFor="">
+          <Label>
             <GetTitle dataFields={dataFields} title={title} />
             <Input
+              {...register("title")}
               type="text"
               value={title ? title : dataFields.title}
-              onChange={(e) => setTitle(e.currentTarget.value)}
             />
           </Label>
-          <Label htmlFor="">
+          <Label>
             Description
             <Input
+              {...register("description")}
               type="text"
               value={description ? description : dataFields.description}
-              onChange={(e) => setDescription(e.currentTarget.value)}
             />
           </Label>
         </Fields>
 
         <SubmitButtonContainer>
-          <Button type="submit" onClick={handleSubmit} disabled={disabledForm}>
-            save
-          </Button>
+          <Button label="save" type="submit" disabled={disabledForm} />
         </SubmitButtonContainer>
       </Form>
     </Wrapper>

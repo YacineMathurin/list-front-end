@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import toastify from "toastify-js";
-
 import { Button } from "../atoms/button";
 
 export const AddFormMovie = () => {
@@ -26,7 +25,7 @@ export const AddFormMovie = () => {
       body: formData,
     })
       .then((res) => res.json())
-      .then((data) => {
+      .then(() => {
         toastify({
           text: "New movie recorded !",
           duration: 3000,
@@ -62,9 +61,7 @@ export const AddFormMovie = () => {
           </Label>
         </Fields>
         <SubmitButtonContainer>
-          <Button type="submit" disabled={disabledForm}>
-            save
-          </Button>
+          <Button label="save" type="submit" disabled={disabledForm} />
         </SubmitButtonContainer>
       </Form>
       {thumbnail && (
@@ -112,6 +109,7 @@ const Preview = styled.div`
   display: flex;
   flex-direction: column;
 `;
+
 const Fields = styled.div`
   display: flex;
   flex-direction: column;
@@ -121,6 +119,7 @@ const Fields = styled.div`
     flex-direction: row;
   }
 `;
+
 const SubmitButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;

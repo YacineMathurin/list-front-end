@@ -16,7 +16,7 @@ const getBgColor = (props: ButtonProps) => {
   return "#2b2d42";
 };
 
-export const Button = styled.button<{
+export const SquaredButton = styled.button<{
   disabled?: boolean;
   size?: "sm" | "lg";
   variant?: "default" | "danger";

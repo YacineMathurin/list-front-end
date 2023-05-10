@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { Button } from "../atoms/button";
 import { useFetch } from "../../hooks/use-fetch";
+import { Button } from "../atoms/button";
 
 export const MovieList = () => {
   const navigate = useNavigate();
@@ -26,7 +26,7 @@ export const MovieList = () => {
     return (
       <>
         <h6>Something whent wrong</h6>;
-        <Button onClick={() => navigate(0)}>Reload Page</Button>
+        <Button onClick={() => navigate(0)} label="Reload Page" />
       </>
     );
   }
@@ -35,7 +35,11 @@ export const MovieList = () => {
     return (
       <>
         <h6>No movie yet</h6>
-        <Button onClick={() => navigate("/add-movie")}>New movie</Button>
+        <Button
+          onClick={() => navigate("/add-movie")}
+          label="New
+         movie"
+        />
       </>
     );
   }
@@ -43,7 +47,11 @@ export const MovieList = () => {
   return (
     <Wrapper>
       <h1>All movies</h1>
-      <Button onClick={() => navigate("/add-movie")}>new movie</Button>
+      <Button
+        onClick={() => navigate("/add-movie")}
+        label="New movie"
+        primary
+      />
 
       <Container>
         {movies.map((movie) => (
@@ -62,10 +70,9 @@ export const MovieList = () => {
                   state: { movie },
                 })
               }
-              size="sm"
-            >
-              Edit
-            </Button>
+              size="small"
+              label="Edit"
+            />
           </div>
         ))}
       </Container>

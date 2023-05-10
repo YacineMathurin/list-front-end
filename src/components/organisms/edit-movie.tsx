@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import { useLocation, useNavigate } from "react-router-dom";
 import { EditFormMovie } from "../molecules/edit-form-movie";
-import { Button } from "../atoms/button";
 import { useToast } from "../../hooks/use-toast";
+import { Button } from "../atoms/button";
 
 export const EditMovie = () => {
   const navigate = useNavigate();
@@ -29,11 +29,10 @@ export const EditMovie = () => {
 
   return (
     <div>
+      <Button label="back" onClick={() => navigate(-1)} />
       <h1>Editing movie</h1>
       <DeleteDiv>
-        <Button variant="danger" onClick={handleMovieDelection}>
-          delete
-        </Button>
+        <Button label="delete" onClick={handleMovieDelection} />
       </DeleteDiv>
       <EditFormMovie dataFields={movie} />
     </div>
