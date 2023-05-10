@@ -34,12 +34,9 @@ export function useFetch(url: string): UseFetchProps {
     fetch(url, { signal })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         setState({ ...state, loading: false, data });
       })
       .catch((err) => {
-        console.error(err);
-
         setState({ ...state, error: err });
       });
 

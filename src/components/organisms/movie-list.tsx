@@ -13,8 +13,6 @@ export const MovieList = () => {
     error,
   } = useFetch(`${process.env.REACT_APP_SERVER_HOST}/movies`);
 
-  console.log("Env", process.env);
-
   useEffect(() => {}, [movies]);
 
   if (loading) {
