@@ -88,8 +88,6 @@ export const EditFormMovie: FC<EditMovieProps> = ({ dataFields }) => {
   };
 
   const onSubmit = async () => {
-    console.log("on Submit called !", title, description, thumbnail);
-
     const url = `${process.env.REACT_APP_SERVER_HOST}/movies/update`;
     const formData = buildFormData();
 
@@ -103,14 +101,6 @@ export const EditFormMovie: FC<EditMovieProps> = ({ dataFields }) => {
       })
       .catch((err) => console.error(err));
   };
-
-  console.log(
-    "On default values",
-    title,
-    description,
-    thumbnail,
-    typeof watch("thumbnail")
-  );
 
   if (updatedTitle || updatedDescription || updatedThumbnail) {
     disabledForm = false;
