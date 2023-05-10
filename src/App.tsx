@@ -4,6 +4,7 @@ import { MovieList } from "./components/organisms/movie-list";
 import { AddMovie } from "./components/organisms/add-movie";
 import { EditMovie } from "./components/organisms/edit-movie";
 import "toastify-js/src/toastify.css";
+import { Header } from "./components/molecules/header";
 
 const router = createBrowserRouter([
   {
@@ -20,11 +21,23 @@ const router = createBrowserRouter([
   },
 ]);
 
+const user = {
+  name: "New user",
+};
+
 function App() {
   return (
-    <Wrapper>
-      <RouterProvider router={router} />
-    </Wrapper>
+    <>
+      <Header
+        onLogin={() => {}}
+        onLogout={() => {}}
+        onCreateAccount={() => {}}
+        user={user}
+      />
+      <Wrapper>
+        <RouterProvider router={router} />
+      </Wrapper>
+    </>
   );
 }
 

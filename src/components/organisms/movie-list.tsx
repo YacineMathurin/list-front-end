@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useFetch } from "../../hooks/use-fetch";
 import { Button } from "../atoms/button";
+import { Card } from "../molecules/card";
 
 export const MovieList = () => {
   const navigate = useNavigate();
@@ -55,25 +56,18 @@ export const MovieList = () => {
 
       <Container>
         {movies.map((movie) => (
-          <div key={movie.id}>
-            <img
-              src={`${process.env.REACT_APP_SERVER_HOST}/uploads/${movie.thumbnail}`}
-              alt={`Thumbnail - ${movie.title}`}
-              width={"150px"}
-              height={"55px"}
-            />
-            <Title>{movie.title}</Title>
-            <Description>{movie.description}</Description>
-            <Button
-              onClick={() =>
-                navigate("/edit-movie", {
-                  state: { movie },
-                })
-              }
-              size="small"
-              label="Edit"
-            />
-          </div>
+          <Card
+            key={movie.id}
+            title={movie.title}
+            description={movie.description}
+            alt={movie.title}
+            imageSrc={`${process.env.REACT_APP_SERVER_HOST}/uploads/${movie.thumbnail}`}
+            onButtonClick={() =>
+              navigate("/edit-movie", {
+                state: { movie },
+              })
+            }
+          />
         ))}
       </Container>
     </Wrapper>
