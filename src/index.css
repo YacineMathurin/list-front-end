@@ -1,13 +1,40 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: "Akzidenz-Grotesk Std Ext Regular", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+@font-face {
+  font-family: "Akzidenz-Grotesk Std Ext Regular";
+  src: url("../public/fonts/AkzidenzGroteskStd-Ext.woff2"),
+    url("../public/fonts/AkzidenzGroteskStd-Ext.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-stretch: expanded;
+  unicode-range: u+0 -10 ffff;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Akzidenz-Grotesk Std Ext Medium';
+  src: url('../public/fonts/AkzidenzGroteskStd-MdEx.woff2') format('woff2'),
+  url('../public/fonts/AkzidenzGroteskStd-MdEx.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-stretch: expanded;
+  unicode-range: u+0 -10 ffff;
+  font-display: swap;
+}
+
+:root {
+  --regular-font-family: 'Akzidenz-Grotesk Std Ext Regular', sans-serif;
+  --medium-font-family: 'Akzidenz-Grotesk Std Ext Medium', sans-serif;
 }
