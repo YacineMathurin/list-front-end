@@ -2,6 +2,7 @@ import { FC } from "react";
 import styled from "styled-components";
 import { Button } from "../atoms/button";
 import { useForm } from "react-hook-form";
+import { useToast } from "../../hooks/use-toast";
 
 type EditMovieProps = {
   dataFields: {
@@ -67,6 +68,7 @@ export const EditFormMovie: FC<EditMovieProps> = ({ dataFields }) => {
   const updatedTitle = title?.trim() !== dataFields.title;
   const updatedDescription = description?.trim() !== dataFields.description;
   const updatedThumbnail = thumbnail !== dataFields.thumbnail;
+  const toast = useToast();
 
   const buildFormData = () => {
     const formData = new FormData();
@@ -96,9 +98,8 @@ export const EditFormMovie: FC<EditMovieProps> = ({ dataFields }) => {
       body: formData,
     })
       .then((res) => res.json())
-      .then((data) => {
-        console.log("Updated Movie", data);
-        alert("Movie Updated !");
+      .then(() => {
+        toast("Well done, movie Updated !");
       })
       .catch((err) => console.error(err));
   };
