@@ -32,7 +32,14 @@ export const EditMovie = () => {
       <Button label="back" onClick={() => navigate(-1)} />
       <h1>Editing movie</h1>
       <DeleteDiv>
-        <Button label="delete" onClick={handleMovieDelection} />
+        <Button
+          label="Delete"
+          onClick={handleMovieDelection}
+          style={{
+            backgroundColor: "#f72585",
+            color: "#fff",
+          }}
+        />
       </DeleteDiv>
       <EditFormMovie dataFields={movie} />
     </div>

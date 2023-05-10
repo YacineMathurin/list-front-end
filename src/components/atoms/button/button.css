@@ -10,7 +10,7 @@
   transition: .3s;
 }
 
-.storybook-button:hover {
+.storybook-button:hover:enabled {
   letter-spacing: .25em;
 }
 
